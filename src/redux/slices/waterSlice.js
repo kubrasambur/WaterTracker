@@ -28,15 +28,6 @@ export const waterSlice = createSlice({
     removeAllReminders: (state) => {
       state.reminder = [];
     },
-    editReminder: (state, action) => {
-      console.log("action.payload", action.payload);
-      const { id, title } = action.payload;
-      const reminder = state.reminder.find((item) => item.id === id);
-      if (reminder) {
-        console.log("reminder", reminder);
-        reminder.title = title;
-      }
-    },
   },
 });
 
