@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button } from "native-base";
-import CustomModal from "../components/custom/CustomModal";
+import CustomAddModal from "../components/custom/CustomAddModal";
 
 export default function MainPage() {
   const [water, setWater] = useState(0);
@@ -50,9 +50,9 @@ export default function MainPage() {
         Delete all
       </Button>
       <Button onPress={() => setIsOpen(true)} mb={2}>
-        Add water manually
+        Add water
       </Button>
-      <CustomModal
+      <CustomAddModal
         isOpen={isOpen}
         setOpen={() => setIsOpen(false)}
         value={value}

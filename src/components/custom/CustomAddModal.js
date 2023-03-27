@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Modal, FormControl, Input } from "native-base";
 
-export default function CustomModal({
+export default function CustomAddModal({
   isOpen,
   setOpen,
   value,
@@ -16,7 +16,7 @@ export default function CustomModal({
         <Modal.Body>
           <FormControl>
             <FormControl.Label>{title}</FormControl.Label>
-            <Input value={value.toString()} onChangeText={onChangeText} />
+            <Input value={value} onChangeText={onChangeText} />
           </FormControl>
         </Modal.Body>
         <Modal.Footer>
