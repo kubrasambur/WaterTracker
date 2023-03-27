@@ -3,9 +3,6 @@ import React, { useEffect, useState } from "react";
 import { LineChart } from "react-native-chart-kit";
 import { Button, Text } from "native-base";
 import CustomAddModal from "../components/custom/CustomAddModal";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { store } from "../redux/store";
-import { addReminder } from "../redux/slices/waterSlice";
 import { GetData, StoreData } from "../helper/AsyncStorage";
 import uuid from "react-native-uuid";
 import { useSelector } from "react-redux";
@@ -14,12 +11,12 @@ export default function DailyRecords() {
   const allReminders = useSelector((state) => state?.water?.reminder);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [newWaterGoal, setNewWaterGoal] = useState(0);
+  const [newWaterGoal, setNewWaterGoal] = useState("");
 
   function handleOnPress() {
     setIsOpen(false);
-    store.dispatch(addReminder({ id: uuid.v4(), title: newWaterGoal }));
     StoreData([...allReminders, { id: uuid.v4(), title: newWaterGoal }]);
+    GetData();
   }
 
   useEffect(() => {
@@ -89,7 +86,7 @@ export default function DailyRecords() {
       <CustomAddModal
         isOpen={isOpen}
         setOpen={() => setIsOpen(false)}
-        value={newWaterGoal}
+        value={newWaterGoal.toString()}
         onChangeText={setNewWaterGoal}
         handleOnPress={() => handleOnPress()}
         title="Set a target for today"

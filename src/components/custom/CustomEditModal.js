@@ -22,9 +22,9 @@ export default function CustomEditModal({
         <Modal.Footer>
           <Button.Group space={2}>
             <Button variant="ghost" colorScheme="blueGray" onPress={setOpen}>
-              Edit
+              Close
             </Button>
-            <Button onPress={handleOnPress}>Add</Button>
+            <Button onPress={handleOnPress}>Edit</Button>
           </Button.Group>
         </Modal.Footer>
       </Modal.Content>
