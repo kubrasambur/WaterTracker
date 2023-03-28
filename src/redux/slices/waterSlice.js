@@ -3,7 +3,9 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   water: 0,
   waterGoal: 0,
+  waterDaily: [],
   reminder: [],
+  dailyWater: [],
   waterGoalReached: false,
   status: "idle",
   error: null,
@@ -28,6 +30,13 @@ export const waterSlice = createSlice({
     removeAllReminders: (state) => {
       state.reminder = [];
     },
+    addDailyWater: (state, action) => {
+      console.log("addDailyWater", action.payload);
+      state.dailyWater.push(action.payload);
+    },
+    setWaterDaily: (state, action) => {
+      state.waterDaily = action.payload;
+    },
   },
 });
 
@@ -38,6 +47,8 @@ export const {
   setAsyncStorage,
   removeAllReminders,
   editReminder,
+  addDailyWater,
+  setWaterDaily,
 } = waterSlice.actions;
 
 export default waterSlice.reducer;

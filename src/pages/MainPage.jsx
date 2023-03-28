@@ -1,22 +1,34 @@
-import { View, Text, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Button } from "native-base";
+import { Button, Text, VStack } from "native-base";
 import CustomAddModal from "../components/custom/CustomAddModal";
+import { store } from "../redux/store";
+import { addDailyWater, setWaterDaily } from "../redux/slices/waterSlice";
+import { useSelector } from "react-redux";
+import { GetWaterData, StoreWaterData } from "../helper/AsyncStorage";
 
 export default function MainPage() {
   const [water, setWater] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState("");
-
-  function increaseWater() {
-    setWater(water + 1);
-  }
+  const [dailyWater, setDailyWater] = useState([]);
 
   useEffect(() => {
-    AsyncStorage.getItem("water").then((value) => {
+    AsyncStorage.getItem("dailyWater").then((value) => {
       if (value) {
-        setWater(parseInt(value));
+        setDailyWater(JSON.parse(value));
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    store.dispatch(setWaterDaily(dailyWater));
+  }, [dailyWater]);
+
+  useEffect(() => {
+    AsyncStorage.getItem("water").then((value2) => {
+      if (value2) {
+        setWater(parseInt(value2));
       }
     });
   }, []);
@@ -25,33 +37,31 @@ export default function MainPage() {
     AsyncStorage.setItem("water", water.toString());
   }, [water]);
 
-  function deleteWater() {
-    setWater(0);
-  }
-
   function handleOnPress(value) {
     setWater(water + parseInt(value));
     setIsOpen(false);
+    setValue("");
+    store.dispatch(addDailyWater(parseInt(value)));
+    AsyncStorage.setItem(
+      "dailyWater",
+      JSON.stringify([...dailyWater, parseInt(value)])
+    );
+    setDailyWater([...dailyWater, parseInt(value)]);
   }
 
   return (
-    <View style={styles.container}>
-      <Text>Total amount of water drunk until today</Text>
-      <Text>{water}</Text>
-      <Button onPress={increaseWater} mb={2}>
-        Increase water
-      </Button>
-      <Button
-        onPress={() => {
-          deleteWater();
-        }}
-        mb={2}
-      >
-        Delete all
-      </Button>
-      <Button onPress={() => setIsOpen(true)} mb={2}>
+    <VStack bg="white" flex={1} px="10%" pt="5%">
+      <Text mb={3} fontSize={25}>
+        Total amount of water drunk until today
+      </Text>
+      <Text mb={5} fontSize={19}>
+        {water} lt
+      </Text>
+
+      <Button _text={{ fontSize: 18 }} onPress={() => setIsOpen(true)} mb={2}>
         Add water
       </Button>
+
       <CustomAddModal
         isOpen={isOpen}
         setOpen={() => setIsOpen(false)}
@@ -60,14 +70,6 @@ export default function MainPage() {
         handleOnPress={() => handleOnPress(value)}
         title="Add water"
       />
-    </View>
+    </VStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    padding: 25,
-  },
-});
