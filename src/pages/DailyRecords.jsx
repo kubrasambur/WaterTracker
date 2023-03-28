@@ -1,17 +1,19 @@
-import { View, Dimensions, StyleSheet } from "react-native";
+import { Dimensions } from "react-native";
 import React, { useEffect, useState } from "react";
 import { LineChart } from "react-native-chart-kit";
-import { Button, Text } from "native-base";
+import { Button, Text, VStack } from "native-base";
 import CustomAddModal from "../components/custom/CustomAddModal";
-import { GetData, StoreData } from "../helper/AsyncStorage";
+import { GetData, GetWaterData, StoreData } from "../helper/AsyncStorage";
 import uuid from "react-native-uuid";
 import { useSelector } from "react-redux";
 
 export default function DailyRecords() {
   const allReminders = useSelector((state) => state?.water?.reminder);
+  const dailyww = useSelector((state) => state?.water?.waterDaily);
 
   const [isOpen, setIsOpen] = useState(false);
   const [newWaterGoal, setNewWaterGoal] = useState("");
+  const [water, setWater] = useState([50, 100, 150, 200, 250, 300, 350]);
 
   function handleOnPress() {
     setIsOpen(false);
@@ -24,34 +26,23 @@ export default function DailyRecords() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text> Line Chart</Text>
+    <VStack bg="white" flex={1} pt={5}>
       <LineChart
         data={{
-          labels: ["January", "February", "March", "April", "May", "June"],
+          labels: ["1", "2", "3", "4", "5", "6", "7"],
           datasets: [
             {
-              data: [
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-              ],
+              data: dailyww,
             },
           ],
         }}
         width={Dimensions.get("window").width} // from react-native
-        height={220}
-        yAxisLabel="$"
-        yAxisSuffix="k"
-        yAxisInterval={1} // optional, defaults to 1
+        height={250}
+        yAxisSuffix=" lt"
         chartConfig={{
           backgroundColor: "#e26a00",
           backgroundGradientFrom: "#fb8c00",
           backgroundGradientTo: "#ffa726",
-          decimalPlaces: 2, // optional, defaults to 2dp
           color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
           labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
           style: {
@@ -59,14 +50,15 @@ export default function DailyRecords() {
           },
           propsForDots: {
             r: "6",
-            strokeWidth: "2",
+
             stroke: "#ffa726",
           },
         }}
-        bezier
         style={{
-          marginVertical: 8,
+          marginVertical: 10,
           borderRadius: 16,
+          marginRight: 20,
+          marginLeft: 10,
         }}
       />
       {newWaterGoal > 0 ? (
@@ -80,7 +72,7 @@ export default function DailyRecords() {
       )}
 
       <Button onPress={() => setIsOpen(true)} mt={2} mx={2}>
-        set target
+        {newWaterGoal > 0 ? "Change target" : "Set target"}
       </Button>
 
       <CustomAddModal
@@ -91,14 +83,6 @@ export default function DailyRecords() {
         handleOnPress={() => handleOnPress()}
         title="Set a target for today"
       />
-    </View>
+    </VStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: 15,
-  },
-});

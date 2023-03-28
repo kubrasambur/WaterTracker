@@ -11,7 +11,6 @@ import CustomAddModal from "../components/custom/CustomAddModal";
 
 export default function () {
   const allReminders = useSelector((state) => state?.water?.reminder);
-  console.log("allReminders", allReminders);
 
   const [EditIsOpen, setEditIsOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -63,7 +62,7 @@ export default function () {
   }, []);
 
   return (
-    <Center px={5} mt={4}>
+    <Center px={5} pt={4} bg="white" flex={1}>
       <ScrollView h="87%">
         {allReminders.map((reminder) => {
           return (
@@ -81,10 +80,10 @@ export default function () {
               pr={2}
               py={2}
             >
-              <Text mr={3} w="20%">
+              <Text mr={3} w="30%">
                 {reminder.title}
               </Text>
-              <Button w="40%" onPress={() => onEditReminder(reminder)}>
+              <Button w="30%" onPress={() => onEditReminder(reminder)}>
                 Edit
               </Button>
             </Box>
