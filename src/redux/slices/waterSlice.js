@@ -31,7 +31,6 @@ export const waterSlice = createSlice({
       state.reminder = [];
     },
     addDailyWater: (state, action) => {
-      console.log("addDailyWater", action.payload);
       state.dailyWater.push(action.payload);
     },
     setWaterDaily: (state, action) => {

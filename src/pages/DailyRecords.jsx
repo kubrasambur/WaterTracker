@@ -3,23 +3,42 @@ import React, { useEffect, useState } from "react";
 import { LineChart } from "react-native-chart-kit";
 import { Button, Text, VStack } from "native-base";
 import CustomAddModal from "../components/custom/CustomAddModal";
-import { GetData, GetWaterData, StoreData } from "../helper/AsyncStorage";
+import { GetData, StoreData } from "../helper/AsyncStorage";
 import uuid from "react-native-uuid";
 import { useSelector } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function DailyRecords() {
   const allReminders = useSelector((state) => state?.water?.reminder);
-  const dailyww = useSelector((state) => state?.water?.waterDaily);
+  const dailyWater = useSelector((state) => state?.water?.waterDaily);
 
   const [isOpen, setIsOpen] = useState(false);
   const [newWaterGoal, setNewWaterGoal] = useState("");
-  const [water, setWater] = useState([50, 100, 150, 200, 250, 300, 350]);
+  const [waterGoal, setWaterGoal] = useState(0);
+
+  const labels = dailyWater.map((item) => {
+    return `day ${item.id}`;
+  });
 
   function handleOnPress() {
     setIsOpen(false);
+
+    AsyncStorage.setItem("waterGoal", JSON.stringify(newWaterGoal));
+    const value = AsyncStorage.getItem("waterGoal");
+    value.then((value) => {
+      setWaterGoal(JSON.parse(value));
+    });
+
     StoreData([...allReminders, { id: uuid.v4(), title: newWaterGoal }]);
     GetData();
   }
+
+  useEffect(() => {
+    const value = AsyncStorage.getItem("waterGoal");
+    value.then((value) => {
+      setWaterGoal(JSON.parse(value));
+    });
+  }, []);
 
   useEffect(() => {
     GetData();
@@ -29,10 +48,12 @@ export default function DailyRecords() {
     <VStack bg="white" flex={1} pt={5}>
       <LineChart
         data={{
-          labels: ["1", "2", "3", "4", "5", "6", "7"],
+          labels,
           datasets: [
             {
-              data: dailyww,
+              data: dailyWater.map((item) => {
+                return item.value;
+              }),
             },
           ],
         }}
@@ -61,18 +82,18 @@ export default function DailyRecords() {
           marginLeft: 10,
         }}
       />
-      {newWaterGoal > 0 ? (
-        <Text mx={2} mt={5}>
-          Target for today: {newWaterGoal}
+      {waterGoal > 0 ? (
+        <Text fontSize={17} mx={3} mt={5}>
+          Target for today: {waterGoal} lt
         </Text>
       ) : (
-        <Text mx={2} mt={5}>
+        <Text fontSize={17} mx={3} mt={5}>
           Set a target for today
         </Text>
       )}
 
-      <Button onPress={() => setIsOpen(true)} mt={2} mx={2}>
-        {newWaterGoal > 0 ? "Change target" : "Set target"}
+      <Button onPress={() => setIsOpen(true)} mt={2} mx={3}>
+        {waterGoal > 0 ? "Change target" : "Set target"}
       </Button>
 
       <CustomAddModal

@@ -20,7 +20,8 @@ export default function () {
 
   function removeReminder(id) {
     const newReminders = allReminders.filter((reminder) => reminder.id !== id);
-    AsyncStorage.setItem("reminders", JSON.stringify(newReminders));
+    AsyncStorage.setItem("reminderList", JSON.stringify(newReminders));
+    GetData();
   }
 
   function removeReminders() {
@@ -74,18 +75,25 @@ export default function () {
               alignItems="center"
               justifyContent="space-between"
               bg="gray.300"
-              w="86.5%"
+              w="85%"
               pl={4}
               mb={4}
               pr={2}
               py={2}
             >
-              <Text mr={3} w="30%">
-                {reminder.title}
-              </Text>
-              <Button w="30%" onPress={() => onEditReminder(reminder)}>
-                Edit
-              </Button>
+              <Text w="20%">{reminder.title}</Text>
+              <Box
+                w="40%"
+                display="flex"
+                h={10}
+                flexDirection="row"
+                justifyContent="space-evenly"
+              >
+                <Button onPress={() => onEditReminder(reminder)}>Edit</Button>
+                <Button onPress={() => removeReminder(reminder.id)}>
+                  Delete
+                </Button>
+              </Box>
             </Box>
           );
         })}

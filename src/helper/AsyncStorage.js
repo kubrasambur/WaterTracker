@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { addDailyWater, setAsyncStorage } from "../redux/slices/waterSlice";
+import { setAsyncStorage } from "../redux/slices/waterSlice";
 import { store } from "../redux/store";
 
 export async function StoreData(reminderList) {
@@ -10,32 +10,11 @@ export async function StoreData(reminderList) {
   }
 }
 
-export async function StoreWaterData(dailyWater) {
-  console.log("dailyWater1", dailyWater);
-  try {
-    await AsyncStorage.setItem("dailyWater", JSON.stringify(dailyWater));
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export async function GetWaterData() {
-  try {
-    const value = await AsyncStorage.getItem("dailyWater");
-
-    if (value !== null) {
-      console.log("value2", value);
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 export async function GetData() {
   try {
     const value = await AsyncStorage.getItem("reminderList");
     if (value !== null) {
-      store.dispatch(setAsyncStorage(JSON.parse(allList)));
+      store.dispatch(setAsyncStorage(JSON.parse(value)));
     }
   } catch (error) {
     console.log(error);
@@ -51,4 +30,22 @@ export async function RemoveData(itemId) {
   } catch (error) {
     console.log(error);
   }
+}
+
+export async function StoreWaterData(dailyWater, value) {
+  AsyncStorage.setItem(
+    "dailyWater",
+    JSON.stringify([
+      ...dailyWater,
+      { id: dailyWater.length + 1, value: parseInt(value) },
+    ])
+  );
+}
+
+export async function GetWaterData(setDailyWater) {
+  AsyncStorage.getItem("dailyWater").then((value) => {
+    if (value) {
+      setDailyWater(JSON.parse(value));
+    }
+  });
 }

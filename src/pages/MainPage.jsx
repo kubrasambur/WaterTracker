@@ -4,7 +4,6 @@ import { Button, Text, VStack } from "native-base";
 import CustomAddModal from "../components/custom/CustomAddModal";
 import { store } from "../redux/store";
 import { addDailyWater, setWaterDaily } from "../redux/slices/waterSlice";
-import { useSelector } from "react-redux";
 import { GetWaterData, StoreWaterData } from "../helper/AsyncStorage";
 
 export default function MainPage() {
@@ -13,12 +12,19 @@ export default function MainPage() {
   const [value, setValue] = useState("");
   const [dailyWater, setDailyWater] = useState([]);
 
+  function handleOnPress(value) {
+    setWater(water + parseInt(value));
+    setIsOpen(false);
+    setValue("");
+    store.dispatch(
+      addDailyWater({ id: dailyWater.length + 1, value: parseInt(value) })
+    );
+    StoreWaterData(dailyWater, value);
+    GetWaterData(setDailyWater);
+  }
+
   useEffect(() => {
-    AsyncStorage.getItem("dailyWater").then((value) => {
-      if (value) {
-        setDailyWater(JSON.parse(value));
-      }
-    });
+    GetWaterData(setDailyWater);
   }, []);
 
   useEffect(() => {
@@ -26,9 +32,9 @@ export default function MainPage() {
   }, [dailyWater]);
 
   useEffect(() => {
-    AsyncStorage.getItem("water").then((value2) => {
-      if (value2) {
-        setWater(parseInt(value2));
+    AsyncStorage.getItem("water").then((value) => {
+      if (value) {
+        setWater(parseInt(value));
       }
     });
   }, []);
@@ -36,18 +42,6 @@ export default function MainPage() {
   useEffect(() => {
     AsyncStorage.setItem("water", water.toString());
   }, [water]);
-
-  function handleOnPress(value) {
-    setWater(water + parseInt(value));
-    setIsOpen(false);
-    setValue("");
-    store.dispatch(addDailyWater(parseInt(value)));
-    AsyncStorage.setItem(
-      "dailyWater",
-      JSON.stringify([...dailyWater, parseInt(value)])
-    );
-    setDailyWater([...dailyWater, parseInt(value)]);
-  }
 
   return (
     <VStack bg="white" flex={1} px="10%" pt="5%">
